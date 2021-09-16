@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:system_alert_window/system_alert_window.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
 
@@ -53,6 +54,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _showOverlayWindow() async {
+    if (await canLaunch('youkuad://')) {
+      Future.delayed(Duration(seconds: 2), () async {
+        await launch('youkuad://');
+      });
+    }
     Uint8List uint8list =
         (await rootBundle.load('assets/images/test.png')).buffer.asUint8List();
     if (!_isShowingWindow) {
@@ -81,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                       height: 25,
                       image: uint8list,
                       size: 30,
-                      tag: 'test')),
+                      tag: 'simple_button')),
               EachColumn(
                   widgetStyle: 1,
                   margin: SystemWindowMargin.setSymmetricMargin(0, 10),
@@ -90,7 +96,7 @@ class _MyAppState extends State<MyApp> {
                       height: 25,
                       image: uint8list,
                       size: 30,
-                      tag: 'test1')),
+                      tag: 'simple_button')),
               EachColumn(
                   widgetStyle: 1,
                   margin: SystemWindowMargin.setSymmetricMargin(0, 10),
@@ -99,7 +105,7 @@ class _MyAppState extends State<MyApp> {
                       height: 25,
                       image: uint8list,
                       size: 30,
-                      tag: 'test2')),
+                      tag: 'simple_button')),
             ],
             gravity: ContentGravity.CENTER,
           ),

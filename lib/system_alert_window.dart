@@ -119,7 +119,7 @@ class SystemAlertWindow {
       String notificationBody = "Body",
       SystemWindowPrefMode prefMode = SystemWindowPrefMode.DEFAULT}) async {
     final Map<String, dynamic> params = <String, dynamic>{
-      'header': header.getMap(),
+      'header': header?.getMap(),
       'body': body?.getMap(),
       'footer': footer?.getMap(),
       'margin': margin?.getMap(),
@@ -139,6 +139,12 @@ class SystemAlertWindow {
       {SystemWindowPrefMode prefMode = SystemWindowPrefMode.DEFAULT}) async {
     return await _channel.invokeMethod(
         'closeSystemWindow', [Commons.getSystemWindowPrefMode(prefMode)]);
+  }
+
+  static Future<bool> backToApp(
+      {SystemWindowPrefMode prefMode = SystemWindowPrefMode.DEFAULT}) async {
+    return await _channel
+        .invokeMethod('backToApp', [Commons.getSystemWindowPrefMode(prefMode)]);
   }
 }
 

@@ -196,6 +196,14 @@ public class SystemAlertWindowPlugin extends Activity implements MethodCallHandl
                     result.success(true);
                 }
                 break;
+            case "backToApp":
+                Intent launchIntent =
+                        new Intent(Intent.ACTION_VIEW)
+                                .setAction(Intent.ACTION_MAIN)
+                                .addCategory(Intent.CATEGORY_LAUNCHER);
+                launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(launchIntent);
+                break;
             case "registerCallBackHandler":
                 try {
                     List callBackArguments = (List) call.arguments;

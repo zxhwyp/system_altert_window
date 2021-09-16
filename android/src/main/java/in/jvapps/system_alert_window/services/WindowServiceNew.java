@@ -64,13 +64,10 @@ public class WindowServiceNew extends Service implements View.OnTouchListener {
     private LinearLayout bodyView;
     private LinearLayout footerView;
 
-    private float offsetX;
-    private float offsetY;
-    private int originalXPos;
-    private int originalYPos;
-    private boolean moving;
-
     private Context mContext;
+
+    private float xorigin = 0;
+    private float yorigin = 0;
 
     @Override
     public void onCreate() {
@@ -80,7 +77,7 @@ public class WindowServiceNew extends Service implements View.OnTouchListener {
                 0, notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Overlay window service is running")
-                .setSmallIcon(R.drawable.ic_desktop_windows_black_24dp)
+                .setSmallIcon(R.drawable.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(NOTIFICATION_ID, notification);
@@ -175,7 +172,7 @@ public class WindowServiceNew extends Service implements View.OnTouchListener {
             windowView = new LinearLayout(mContext);
         }
         windowView.setOrientation(LinearLayout.VERTICAL);
-        windowView.setBackgroundColor(Color.WHITE);
+        windowView.setBackgroundColor(Color.TRANSPARENT);
         windowView.setLayoutParams(params);
         windowView.removeAllViews();
         if (headerView != null)
@@ -229,30 +226,17 @@ public class WindowServiceNew extends Service implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         if (null != wm) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                float x = event.getRawX();
-                float y = event.getRawY();
-                moving = false;
-                int[] location = new int[2];
-                windowView.getLocationOnScreen(location);
-                originalXPos = location[0];
-                originalYPos = location[1];
-                offsetX = originalXPos - x;
-                offsetY = originalYPos - y;
+                xorigin = event.getRawX();
+                yorigin = event.getRawY();
             } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                float x = event.getRawX();
-                float y = event.getRawY();
+                float disX = event.getRawX() - xorigin;
+                float disY = event.getRawY() - yorigin;
                 WindowManager.LayoutParams params = (WindowManager.LayoutParams) windowView.getLayoutParams();
-                int newX = (int) (offsetX + x);
-                int newY = (int) (offsetY + y);
-                if (Math.abs(newX - originalXPos) < 1 && Math.abs(newY - originalYPos) < 1 && !moving) {
-                    return false;
-                }
-                params.x = newX;
-                params.y = newY;
+                params.x += disX;
+                params.y += disY;
                 wm.updateViewLayout(windowView, params);
-                moving = true;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                return moving;
+                xorigin = event.getRawX();
+                yorigin = event.getRawY();
             }
         }
         return false;
